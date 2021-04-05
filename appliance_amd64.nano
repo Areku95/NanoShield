@@ -3,7 +3,7 @@
 # NanoShield ? 
 # By Alexandre MONGEON | 2021
 # For Netasq U70S & Stormshield SN300
-# Version 0.7 | 31.03.2021
+# Version 0.8 | 05.04.2021
 #######
 
 NANO_NAME=appliance_12.2_amd64
@@ -165,6 +165,71 @@ cust_routing ()
 cust_logs () (
 	mkdir ${NANO_WORLDDIR}/mnt/logs
 	echo "/dev/mmcsd0p1 /mnt/logs ufs rw 0 0" >> ${NANO_WORLDDIR}/etc/fstab
+)
+
+# Install packages from ${NANO_PACKAGE_DIR}
+
+cust_pkgng ( ) (
+	mkdir -p ${NANO_WORLDDIR}/usr/local/etc
+	local PKG_CONF="${NANO_WORLDDIR}/usr/local/etc/pkg.conf"
+	local PKGCMD="env BATCH=YES ASSUME_ALWAYS_YES=YES PKG_DBDIR=${NANO_PKG_META_BASE}/pkg SIGNATURE_TYPE=none /usr/sbin/pkg"
+
+	# Ensure pkg.conf points pkg to where the package meta data lives.
+	touch ${PKG_CONF}
+	if grep -Eiq '^PKG_DBDIR:.*' ${PKG_CONF}; then
+		sed -i -e "\|^PKG_DBDIR:.*|Is||PKG_DBDIR: "\"${NANO_PKG_META_BASE}/pkg\""|" ${PKG_CONF}
+	else
+		echo "PKG_DBDIR: \"${NANO_PKG_META_BASE}/pkg\"" >> ${PKG_CONF}
+	fi
+
+	# If the package directory doesn't exist, we're done.
+	if [ ! -d ${NANO_PACKAGE_DIR} ]; then
+		echo "DONE 0 packages"
+		return 0
+	fi
+
+	# Find a pkg-* package
+	for x in `find -s ${NANO_PACKAGE_DIR} -iname 'pkg-*'`; do
+		_NANO_PKG_PACKAGE=`basename "$x"`
+	done
+	if [ -z "${_NANO_PKG_PACKAGE}" -o ! -f "${NANO_PACKAGE_DIR}/${_NANO_PKG_PACKAGE}" ]; then
+		echo "FAILED: need a pkg/ package for bootstrapping"
+		exit 2
+	fi
+
+	# Mount packages into chroot
+	mkdir -p ${NANO_WORLDDIR}/_.p
+	mount -t nullfs -o noatime -o ro ${NANO_PACKAGE_DIR} ${NANO_WORLDDIR}/_.p
+	mount -t devfs devfs ${NANO_WORLDDIR}/dev
+
+	trap "umount ${NANO_WORLDDIR}/dev; umount ${NANO_WORLDDIR}/_.p ; rm -rf ${NANO_WORLDDIR}/_.p" 1 2 15 EXIT
+
+	# Install pkg-* package
+	CR "${PKGCMD} add /_.p/${_NANO_PKG_PACKAGE}"
+
+	(
+		# Expand any glob characters in pacakge list
+		cd "${NANO_PACKAGE_DIR}"
+		_PKGS=`find ${NANO_PACKAGE_LIST} -not -name "${_NANO_PKG_PACKAGE}" -print | sort | uniq`
+
+		# Show todo
+		todo=`echo "$_PKGS" | wc -l`
+		echo "=== TODO: $todo"
+		echo "$_PKGS"
+		echo "==="
+
+		# Install packages
+		for _PKG in $_PKGS; do
+			CR "${PKGCMD} add /_.p/${_PKG}"
+		done
+	)
+
+	CR0 "${PKGCMD} info"
+
+	trap - 1 2 15 EXIT
+	umount ${NANO_WORLDDIR}/dev
+	umount ${NANO_WORLDDIR}/_.p
+	rm -rf ${NANO_WORLDDIR}/_.p
 )
 
 #customize_cmd cust_comconsole
