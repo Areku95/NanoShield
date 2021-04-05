@@ -3,7 +3,7 @@
 # NanoShield ? 
 # By Alexandre MONGEON | 2021
 # For Netasq U70S & Stormshield SN300
-# Version 0.9 | 05.04.2021
+# Version 0.10 | 05.04.2021
 #######
 
 NANO_NAME=appliance_12.2_amd64
@@ -155,10 +155,15 @@ cust_ports () (
 	echo "ifconfig_eth8=\"inet 10.0.8.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 )
 
-# Enabling packet forwarding
-cust_routing ()
-(
-	echo "gateway_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+# Enable packet forwarding, IPFW, NAT daemon
+cust_firewall () (
+echo "gateway_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable gateway function
+echo "firewall_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable IPFW
+echo "firewall_logging=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable IPFW logs
+echo "firewall_script=\"/etc/ipfw.rules\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Tells to load this rule set
+echo "natd_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable NATD function
+echo "natd_interface=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Interface name of public Internet NIC
+echo "natd_flags=\"-dynamic\"" >> ${NANO_WORLDDIR}/etc/rc.conf  
 )
 
 # Create a directory for mounting the SD Card and edit fstab for auto-mount the sd card
@@ -168,7 +173,6 @@ cust_logs () (
 )
 
 # Install packages from ${NANO_PACKAGE_DIR}
-
 cust_pkgng ( ) (
 	mkdir -p ${NANO_WORLDDIR}/usr/local/etc
 	local PKG_CONF="${NANO_WORLDDIR}/usr/local/etc/pkg.conf"
@@ -238,5 +242,5 @@ customize_cmd cust_hostname
 customize_cmd cust_serial
 customize_cmd cust_motd
 customize_cmd cust_ports
-customize_cmd cust_routing
+customize_cmd cust_firewall
 customize_cmd cust_pkgng
