@@ -6,6 +6,8 @@ Please note that, for now, only the appliances Netasq U70S and Stormshield SN300
 
 ## How to build the image file ?
 
-<ins>Prerequisites:</ins>
+<ins>**Prerequisites:**</ins>
+
+- Having a FreeBSD operating system running somewhere (virtual machine, old computer, ...)
 
 ### 1. 
