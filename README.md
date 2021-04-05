@@ -36,3 +36,9 @@ And extract it :
 ### 5. Verify the image
 
 ### 6. Copy the image
+
+## Still a lot to do...
+
+- [x] Write the press release
+- [ ] Update the website
+- [ ] Contact the media 
