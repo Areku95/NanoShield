@@ -1,0 +1,178 @@
+#######
+# NanoBSD config file for Stormshield & Netasq appliances
+# NanoShield ? 
+# By Alexandre MONGEON | 2021
+# For Netasq U70S & Stormshield SN300
+# Version 0.7 | 31.03.2021
+#######
+
+NANO_NAME=appliance_12.2_amd64
+NANO_SRC=/root/freebsd-src-i386-12.2/usr/src
+NANO_ARCH=amd64
+NANO_IMAGES=2
+NANO_IMGNAME=appliance_12.2_amd64_vga.img
+NANO_DRIVE=ada0
+# VGA
+NANO_BOOTLOADER=/boot/boot0
+# SERIAL
+#NANO_BOOTLOADER=/boot/boot0sio
+NANO_NEWFS="-b 4096 -f 512 -i 8192 -U"
+NANO_MEDIASIZE=3928176
+NANO_PACKAGE_LIST="isc-dhcp44-server-4.4.2_1.txz wget-1.20.3_1.txz netcat-1.10_3.txz curl-7.74.0.txz"
+NANO_PACKAGE_DIR=/root/packages/All/
+
+#NANO_KERNEL=12.2-i386
+
+
+CONF_BUILD='
+WITHOUT_KLDLOAD=YES
+WITHOUT_NETGRAPH=YES
+WITHOUT_PAM=YES
+WITHOUT_FTP=YES
+WITHOUT_HYPERV=YES
+WITHOUT_KERBEROS=YES
+WITHOUT_EFI=YES
+WITHOUT_GDB=YES
+WITHOUT_NTP=YES
+WITHOUT_NVME=YES
+WITHOUT_PPP=YES
+WITHOUT_SHAREDOCS=YES
+WITHOUT_WIRELESS=YES
+WITHOUT_ZFS=YES
+WITHOUT_CLANG=YES
+WITHOUT_ATM=YES
+WITHOUT_LLD=YES
+WITHOUT_LLDB=YES
+WITHOUT_LLVM_TARGET_ALL=YES
+WITHOUT_NVME=YES
+WITHOUT_SVNLITE=YES
+WITHOUT_TELNET=YES
+WITHOUT_TFTP=YES
+WITHOUT_TESTS=YES
+'
+
+CONF_INSTALL='
+WITHOUT_ACPI=YES
+WITHOUT_BLUETOOTH=YES
+WITHOUT_FORTRAN=YES
+WITHOUT_HTML=YES
+WITHOUT_LPR=YES
+WITHOUT_MAN=YES
+WITHOUT_SENDMAIL=YES
+WITHOUT_SHAREDOCS=YES
+WITHOUT_EXAMPLES=YES
+WITHOUT_INSTALLLIB=YES
+WITHOUT_CALENDAR=YES
+WITHOUT_MISC=YES
+WITHOUT_SHARE=YES
+WITHOUT_BINUTILS=YES
+WITHOUT_CLANG=YES
+WITHOUT_KERBEROS=YES
+WITHOUT_KLDLOAD=YES
+WITHOUT_NETGRAPH=YES
+WITHOUT_PAM=YES
+WITHOUT_FTP=YES
+WITHOUT_HYPERV=YES
+WITHOUT_EFI=YES
+WITHOUT_GDB=YES
+WITHOUT_NTP=YES
+WITHOUT_NVME=YES
+WITHOUT_PPP=YES
+WITHOUT_SHAREDOCS=YES
+WITHOUT_WIRELESS=YES
+WITHOUT_ZFS=YES
+WITHOUT_ATM=YES
+WITHOUT_LLD=YES
+WITHOUT_LLDB=YES
+WITHOUT_LLVM_TARGET_ALL=YES
+WITHOUT_NVME=YES
+WITHOUT_SVNLITE=YES
+WITHOUT_TELNET=YES
+WITHOUT_TFTP=YES
+WITHOUT_TESTS=YES
+'
+
+CONF_WORLD='
+WITHOUT_BIND=YES
+WITHOUT_MODULES=YES
+WITHOUT_GAMES=YES
+WITHOUT_RESCUE=YES
+WITHOUT_LOCALES=YES
+WITHOUT_SYSCONS=YES
+WITHOUT_INFO=YES
+'
+
+# Set hostname
+cust_hostname () (
+	echo "hostname=\"netasq-u70s\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+)
+
+# Use both VGA & Console
+cust_serial () (
+	touch ${NANO_WORLDDIR}/boot/loader.conf
+	echo "boot_multicons=\"YES\"" >> ${NANO_WORLDDIR}/boot/loader.conf
+	echo "boot_serial=\"YES\"" >> ${NANO_WORLDDIR}/boot/loader.conf
+	echo "console=\"comconsole, vidconsole\"" >> ${NANO_WORLDDIR}/boot/loader.conf
+	echo "comconsole_speed=\"115200\"" >> ${NANO_WORLDDIR}/boot/loader.conf
+)
+
+# Customize motd banner
+cust_motd () (
+	echo "" >> ${NANO_WORLDDIR}/etc/motd
+	echo "Welcome to this customized FreeBSD image adjusted for Netasq & Stormshield firewalls" > ${NANO_WORLDDIR}/etc/motd
+	echo "" >> ${NANO_WORLDDIR}/etc/motd
+	echo "Based on FreeBSD 12.2/amd64" >> ${NANO_WORLDDIR}/etc/motd
+	echo "" >> ${NANO_WORLDDIR}/etc/motd
+	echo "\"Unnamed\" project v0.7 - 2021 - A.MONGEON" >> ${NANO_WORLDDIR}/etc/motd
+	echo "" >> ${NANO_WORLDDIR}/etc/motd
+)
+
+# Setting up ethernet ports
+cust_ports () (
+	echo "vlans_em0=\"1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_1_name=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth1=\"inet 10.0.1.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_2_name=\"eth2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth2=\"inet 10.0.2.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"3\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_3_name=\"eth3\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth3=\"inet 10.0.3.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"4\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_4_name=\"eth4\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth4=\"inet 10.0.4.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"5\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_5_name=\"eth5\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth5=\"inet 10.0.5.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"6\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_6_name=\"eth6\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth6=\"inet 10.0.6.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"7\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_7_name=\"eth7\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth7=\"inet 10.0.7.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"8\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_em0_8_name=\"eth8\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth8=\"inet 10.0.8.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+)
+
+# Enabling packet forwarding
+cust_routing ()
+(
+	echo "gateway_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+)
+
+# Create a directory for mounting the SD Card and edit fstab for auto-mount the sd card
+cust_logs () (
+	mkdir ${NANO_WORLDDIR}/mnt/logs
+	echo "/dev/mmcsd0p1 /mnt/logs ufs rw 0 0" >> ${NANO_WORLDDIR}/etc/fstab
+)
+
+#customize_cmd cust_comconsole
+customize_cmd cust_install_files
+customize_cmd cust_allow_ssh_root
+customize_cmd cust_hostname
+customize_cmd cust_serial
+customize_cmd cust_motd
+customize_cmd cust_ports
+customize_cmd cust_routing
+customize_cmd cust_pkgng
