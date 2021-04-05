@@ -22,3 +22,5 @@ And extract it :
 
 ### 2. Download the required packages
 
+`# mkdir /usr/src/packages`
+`# pkg fetch -o /root/packages/ -d pkg isc-dhcp44-server`
