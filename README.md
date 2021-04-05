@@ -39,6 +39,10 @@ And extract it :
 
 ## Still a lot to do...
 
+- [x] Set-up VGA and Serial
+- [x] Set-up correctly the interfaces at startup
+- [x] Mount the SD Card automaticly at startup
+- [x] Provide the DHCP server package
 - [x] Config the Firewall (IPFW) and enable related functions (natd, packet forwarding)
 - [ ] Test the image on small appliances like U30S/SN200
 - [ ] Provide the IPS/IDS Snort package as built-in
