@@ -3,7 +3,7 @@
 # NanoShield ? 
 # By Alexandre MONGEON | 2021
 # For Netasq U70S & Stormshield SN300
-# Version 0.10 | 05.04.2021
+# Version 0.11 | 05.04.2021
 #######
 
 NANO_NAME=appliance_12.2_amd64
@@ -20,9 +20,6 @@ NANO_NEWFS="-b 4096 -f 512 -i 8192 -U"
 NANO_MEDIASIZE=3928176
 NANO_PACKAGE_LIST="isc-dhcp44-server-4.4.2_1.txz wget-1.20.3_1.txz netcat-1.10_3.txz curl-7.74.0.txz"
 NANO_PACKAGE_DIR=/root/packages/All/
-
-#NANO_KERNEL=12.2-i386
-
 
 CONF_BUILD='
 WITHOUT_KLDLOAD=YES
@@ -127,8 +124,8 @@ cust_motd () (
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
 )
 
-# Setting up ethernet ports
-cust_ports () (
+# Setting up ethernet interfaces
+cust_interfaces () (
 	echo "vlans_em0=\"1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 	echo "ifconfig_em0_1_name=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 	echo "ifconfig_eth1=\"inet 10.0.1.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
@@ -241,6 +238,6 @@ customize_cmd cust_allow_ssh_root
 customize_cmd cust_hostname
 customize_cmd cust_serial
 customize_cmd cust_motd
-customize_cmd cust_ports
+customize_cmd cust_interfaces
 customize_cmd cust_firewall
 customize_cmd cust_pkgng
