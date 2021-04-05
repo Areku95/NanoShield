@@ -4,7 +4,7 @@ This project aims to provide a customized NanoBSD image for Stormshield and Neta
 
 Please note that, for now, only the appliances Netasq U70S and Stormshield SN300 are tested and valided.
 
-> Despite that original firmwares provided by Stormshield are build for i386 architecture, the embedded CPU is x64 architecture.
+Despite that original firmwares provided by Stormshield are builded for i386 architecture, the embedded CPU is a x64 CPU. Therefore, based amd64 NanoBSD images works on these appliances.
 
 ## How to build the image file ?
 
