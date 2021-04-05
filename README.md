@@ -24,4 +24,13 @@ And extract it :
 ### 2. Download the required packages
 
 `# mkdir /usr/src/packages`
+
 `# pkg fetch -o /root/packages/ -d pkg isc-dhcp44-server`
+
+### 3. Download the config file
+
+### 4. Launch the build
+
+### 5. Verify the image
+
+### 6. Copy the image
