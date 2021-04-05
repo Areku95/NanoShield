@@ -9,6 +9,7 @@ Please note that, for now, only the appliances Netasq U70S and Stormshield SN300
 <ins>**Prerequisites:**</ins>
 
 - Having a FreeBSD operating system running somewhere (virtual machine, old computer, ...)
+- And of course, having an appliance (U70S or SN300)
 
 ### 1. Download the sources
 
