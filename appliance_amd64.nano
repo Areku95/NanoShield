@@ -3,7 +3,7 @@
 # NanoShield ? 
 # By Alexandre MONGEON | 2021
 # For Netasq U70S & Stormshield SN300
-# Version 0.12 | 05.04.2021
+# Version 0.15 | 10.04.2021
 #######
 
 NANO_NAME=appliance_12.2_amd64
@@ -18,7 +18,7 @@ NANO_BOOTLOADER=/boot/boot0
 #NANO_BOOTLOADER=/boot/boot0sio
 NANO_NEWFS="-b 4096 -f 512 -i 8192 -U"
 NANO_MEDIASIZE=3928176
-NANO_PACKAGE_LIST="isc-dhcp44-server-4.4.2_1.txz wget-1.20.3_1.txz netcat-1.10_3.txz curl-7.74.0.txz"
+NANO_PACKAGE_LIST="isc-dhcp44-server-4.4.2_1.txz wget-1.20.3_1.txz watch? htop"
 NANO_PACKAGE_DIR=/root/packages/All/
 
 CONF_BUILD='
@@ -133,47 +133,54 @@ cust_motd () (
 
 # Setting up ethernet interfaces
 cust_interfaces () (
-	echo "vlans_em0=\"1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_1_name=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth1=\"inet 10.0.1.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_2_name=\"eth2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth2=\"inet 10.0.2.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"3\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_3_name=\"eth3\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth3=\"inet 10.0.3.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"4\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_4_name=\"eth4\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth4=\"inet 10.0.4.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"5\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_5_name=\"eth5\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth5=\"inet 10.0.5.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"6\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_6_name=\"eth6\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth6=\"inet 10.0.6.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"7\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_7_name=\"eth7\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth7=\"inet 10.0.7.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "vlans_em0=\"8\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_em0_8_name=\"eth8\"" >> ${NANO_WORLDDIR}/etc/rc.conf
-	echo "ifconfig_eth8=\"inet 10.0.8.254/24\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "vlans_em0=\"eth1 eth2 eth3 eth4 eth5 eth6 eth7 eth8\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth1=\"vlan 1\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth2=\"vlan 2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth3=\"vlan 3\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth4=\"vlan 4\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth5=\"vlan 5\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth6=\"vlan 6\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth7=\"vlan 7\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "create_args_eth8=\"vlan 8\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth1=\"inet 10.0.1.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth2=\"inet 10.0.2.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth3=\"inet 10.0.3.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth4=\"inet 10.0.4.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth5=\"inet 10.0.5.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth6=\"inet 10.0.6.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth7=\"inet 10.0.7.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "ifconfig_eth8=\"inet 10.0.8.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 )
 
 # Enable packet forwarding, IPFW, NAT daemon
 cust_firewall () (
-echo "gateway_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable gateway function
-echo "firewall_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable IPFW
-echo "firewall_logging=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable IPFW logs
-echo "firewall_script=\"/etc/ipfw.rules\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Tells to load this rule set
-echo "natd_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable NATD function
-echo "natd_interface=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Interface name of public Internet NIC
-echo "natd_flags=\"-dynamic\"" >> ${NANO_WORLDDIR}/etc/rc.conf  
+	echo "gateway_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable gateway function
+	echo "firewall_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable IPFW
+	echo "firewall_logging=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable IPFW logs
+	echo "firewall_script=\"/etc/ipfw.rules\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Tells to load this rule set
+	echo "natd_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable NATD function
+	echo "natd_interface=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Interface name of public Internet NIC
+	echo "natd_flags=\"-dynamic\"" >> ${NANO_WORLDDIR}/etc/rc.conf  
+)
+
+# Setup dhcpd
+cust_dhcpd () (
+	echo "dhcpd_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "dhcpd_ifaces=\"eth2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	echo "option domain-name \"example.com\";" > ${NANO_WORLDDIR}/etc/local/dhcpd.conf
+	echo "option domain-name-servers 1.1.1.1, 9.9.9.9;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
+	echo "default-lease-time 3600;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
+	echo "max-lease-time 86400;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
+	echo "subnet 10.0.2.0 netmask 255.255.255.0 {" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
+	echo "	range 10.0.2.10 10.0.2.99;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf  
+	echo "	option routers 10.0.2.254;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
+	echo "}" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
 )
 
 # Create a directory for mounting the SD Card and edit fstab for auto-mount the sd card
 cust_logs () (
 	mkdir ${NANO_WORLDDIR}/mnt/logs
-	echo "/dev/mmcsd0p1 /mnt/logs ufs rw 0 0" >> ${NANO_WORLDDIR}/etc/fstab
+	#echo "/dev/mmcsd0p1 /mnt/logs ufs rw 0 0" >> ${NANO_WORLDDIR}/etc/fstab
 )
 
 # Install packages from ${NANO_PACKAGE_DIR}
@@ -248,3 +255,4 @@ customize_cmd cust_motd
 customize_cmd cust_interfaces
 customize_cmd cust_firewall
 customize_cmd cust_pkgng
+customize_cmd cust_logs
