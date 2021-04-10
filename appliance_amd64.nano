@@ -3,7 +3,7 @@
 # NanoShield ? 
 # By Alexandre MONGEON | 2021
 # For Netasq U70S & Stormshield SN300
-# Version 0.15 | 10.04.2021
+# Version 0.16 | 10.04.2021
 #######
 
 NANO_NAME=appliance_12.2_amd64
@@ -18,7 +18,7 @@ NANO_BOOTLOADER=/boot/boot0
 #NANO_BOOTLOADER=/boot/boot0sio
 NANO_NEWFS="-b 4096 -f 512 -i 8192 -U"
 NANO_MEDIASIZE=3928176
-NANO_PACKAGE_LIST="isc-dhcp44-server-4.4.2_1.txz wget-1.20.3_1.txz watch? htop"
+NANO_PACKAGE_LIST="isc-dhcp44-server*.txz wget*.txz cmdwatch*.txz htop*.txz lsof*.txz"
 NANO_PACKAGE_DIR=/root/packages/All/
 
 CONF_BUILD='
@@ -120,13 +120,6 @@ cust_motd () (
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
 	echo "Based on FreeBSD 12.2/amd64" >> ${NANO_WORLDDIR}/etc/motd
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
-	echo "" >> ${NANO_WORLDDIR}/etc/motd
-	echo " _   _                  ____  _     _      _     _ " >> ${NANO_WORLDDIR}/etc/motd
-	echo "| \ | | __ _ _ __   ___/ ___|| |__ (_) ___| | __| |" >> ${NANO_WORLDDIR}/etc/motd
-	echo "|  \| |/ _` | '_ \ / _ \___ \| '_ \| |/ _ \ |/ _` |" >> ${NANO_WORLDDIR}/etc/motd
-	echo "| |\  | (_| | | | | (_) |__) | | | | |  __/ | (_| |" >> ${NANO_WORLDDIR}/etc/motd
-	echo "|_| \_|\__,_|_| |_|\___/____/|_| |_|_|\___|_|\__,_|" >> ${NANO_WORLDDIR}/etc/motd
-	echo "" >> ${NANO_WORLDDIR}/etc/motd
 	echo "NanoShield project v0.12 - 2021 - A.MONGEON" >> ${NANO_WORLDDIR}/etc/motd
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
 )
@@ -150,6 +143,12 @@ cust_interfaces () (
 	echo "ifconfig_eth6=\"inet 10.0.6.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 	echo "ifconfig_eth7=\"inet 10.0.7.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 	echo "ifconfig_eth8=\"inet 10.0.8.254 netmask 255.255.255.0\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+)
+
+# Enable bridge support
+cust_bridge () (
+	echo "if_bridge_load=\"YES\"" >> ${NANO_WORLDDIR}/boot/loader.conf
+	echo "bridgestp_load=\"YES\"" >> ${NANO_WORLDDIR}/boot/loader.conf
 )
 
 # Enable packet forwarding, IPFW, NAT daemon
@@ -253,6 +252,7 @@ customize_cmd cust_hostname
 customize_cmd cust_serial
 customize_cmd cust_motd
 customize_cmd cust_interfaces
+customize_cmd cust_bridge
 customize_cmd cust_firewall
 customize_cmd cust_pkgng
 customize_cmd cust_logs
