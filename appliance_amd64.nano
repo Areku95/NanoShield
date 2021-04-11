@@ -3,11 +3,12 @@
 # NanoShield ? 
 # By Alexandre MONGEON | 2021
 # For Netasq U70S & Stormshield SN300
-# Version 0.16 | 10.04.2021
+# Version 0.17 | 11.04.2021
 #######
 
 NANO_NAME=appliance_12.2_amd64
 NANO_SRC=/root/freebsd-src-i386-12.2/usr/src
+NANO_KERNEL=/root/kernel.conf
 NANO_ARCH=amd64
 NANO_IMAGES=2
 NANO_IMGNAME=appliance_12.2_amd64_vga.img
@@ -120,7 +121,7 @@ cust_motd () (
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
 	echo "Based on FreeBSD 12.2/amd64" >> ${NANO_WORLDDIR}/etc/motd
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
-	echo "NanoShield project v0.12 - 2021 - A.MONGEON" >> ${NANO_WORLDDIR}/etc/motd
+	echo "NanoShield project v0.17 - 2021 - A.MONGEON" >> ${NANO_WORLDDIR}/etc/motd
 	echo "" >> ${NANO_WORLDDIR}/etc/motd
 )
 
@@ -160,12 +161,19 @@ cust_firewall () (
 	echo "natd_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Enable NATD function
 	echo "natd_interface=\"eth1\"" >> ${NANO_WORLDDIR}/etc/rc.conf # Interface name of public Internet NIC
 	echo "natd_flags=\"-dynamic\"" >> ${NANO_WORLDDIR}/etc/rc.conf  
+	echo "ipfw_load=\"YES\"" >> ${NANO_WORLDDIR}/boot/loader.conf
 )
 
 # Setup dhcpd
 cust_dhcpd () (
+	# /etc/rc.conf 
 	echo "dhcpd_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf
 	echo "dhcpd_ifaces=\"eth2\"" >> ${NANO_WORLDDIR}/etc/rc.conf
+	#echo "dhcpd_chuser_enable=\"YES\""  >> ${NANO_WORLDDIR}/etc/rc.conf # runs w/o privileges
+	#echo "dhcpd_withuser=\"dhcpd\""  >> ${NANO_WORLDDIR}/etc/rc.conf # user name to run as
+	#echo "dhcpd_withgroup=\"dhcpd\"" >> ${NANO_WORLDDIR}/etc/rc.conf # group name to run as
+	#echo "dhcpd_chroot_enable=\"YES\"" >> ${NANO_WORLDDIR}/etc/rc.conf # runs chrooted
+	# /etc/local/dhcpd.conf
 	echo "option domain-name \"example.com\";" > ${NANO_WORLDDIR}/etc/local/dhcpd.conf
 	echo "option domain-name-servers 1.1.1.1, 9.9.9.9;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
 	echo "default-lease-time 3600;" >> ${NANO_WORLDDIR}/etc/local/dhcpd.conf
@@ -256,3 +264,4 @@ customize_cmd cust_bridge
 customize_cmd cust_firewall
 customize_cmd cust_pkgng
 customize_cmd cust_logs
+customize_cmd cust_dhcpd
